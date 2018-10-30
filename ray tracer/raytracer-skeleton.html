@@ -70,8 +70,11 @@ var up = new Vector3(0, 1, 0);
 // They also provide a "raycast" function that you can pass a ray to
 // in order to find intersection between the ray and the object
 
-var sphere = new Sphere(new Vector3(0,0,0),2); // todo = new Sphere(..., ...);<-CHRIS CARSON
-var plane = new Plane(new Vector3(0,1,0),new Vector3(0,-0.2,0)); // todo = new Plane(..., ...);<-CHRIS CARSON Totally guessing on how to set up a plane here.
+var sphereVector = new Vector3(0,0,0);
+var sphere = new Sphere(sphereVector,2); // todo = new Sphere(..., ...);<-CHRIS CARSON
+var planeVector = new Vector3(0,1,0);//<-CHRIS CARSON
+var planePointVector = new Vector3(0,-0.2,0);//<-CHRIS CARSON
+var plane = new Plane(planeVector,planePointVector); // todo = new Plane(..., ...);<-CHRIS CARSON Totally guessing on how to set up a plane here.
 
 // end of raytracer setup ******************************************************
 
@@ -93,7 +96,7 @@ function generateRayForPixel(xPixelIndex, yPixelIndex) {
 
 // -----------------------------------------------------------------------------
 function setPixelColor(xPixelIndex, yPixelIndex, shadeOfGray /*[0,1]*/) {
-	var index = xPixelIndex*4 + yPixelIndex*4*256; //<-CHRIS CARSON
+	var index = xPixelIndex*4*256 + yPixelIndex*4; //<-CHRIS CARSON
 
 	imageData.data[index + 0] = shadeOfGray * 255;
 	imageData.data[index + 1] = shadeOfGray * 255;
