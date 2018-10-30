@@ -40,11 +40,12 @@ var imageData = canvasContext.getImageData(0, 0, pixelsAcross, pixelsDown);
 var fov = 45;   // if this changes, your code should still work
 var fovRadians; // todo -> convert degrees to radians
 
-var pixelWidth; // todo -> what's the size of a pixel from left to right?
-var pixelHalfWidth; // todo -> half of the pixel width
+var pixelWidth = 2/256; // todo -> what's the size of a pixel from left to right? <-CHRIS CARSON
+var pixelHalfWidth = (2/256)/2; // todo -> half of the pixel width <-CHRIS CARSON
 
 // How far away (scalar) the eye is from the image plane (see MV3202 guide for more info)
-var eyeDistance; // = todo -> hint: related to tangent and field of view (see slides)
+var eyeDistance = 1.793; // = todo -> hint: related to tangent and field of view (see slides)<-CHRIS CARSON
+// tan(45/2) = 1/d <-CHRIS CARSON
 // -----------
 // |         /
 // |        /
@@ -69,10 +70,12 @@ var up = new Vector3(0, 1, 0);
 // They also provide a "raycast" function that you can pass a ray to
 // in order to find intersection between the ray and the object
 
-var sphere; // todo = new Sphere(..., ...);
-var plane; // todo = new Plane(..., ...);
+var sphere = new Sphere(new Vector3(0,0,0),2); // todo = new Sphere(..., ...);<-CHRIS CARSON
+var plane = new Plane(new Vector3(0,1,0),new Vector3(0,-0.2,0)); // todo = new Plane(..., ...);<-CHRIS CARSON Totally guessing on how to set up a plane here.
 
 // end of raytracer setup ******************************************************
+
+//setPixelColor(xPixelIndex, yPixelIndex, 0.5);
 
 // -----------------------------------------------------------------------------
 // return a ray that goes from the eye point through the pixel at index (xPixelIndex, yPixelIndex)
@@ -90,7 +93,7 @@ function generateRayForPixel(xPixelIndex, yPixelIndex) {
 
 // -----------------------------------------------------------------------------
 function setPixelColor(xPixelIndex, yPixelIndex, shadeOfGray /*[0,1]*/) {
-	var index;
+	var index = xPixelIndex*4 + yPixelIndex*4*256; //<-CHRIS CARSON
 
 	imageData.data[index + 0] = shadeOfGray * 255;
 	imageData.data[index + 1] = shadeOfGray * 255;
@@ -126,7 +129,7 @@ function updateAndRender(timeElapsed) {
 				setPixelColor(xPixelIndex, yPixelIndex, 0.5); // middle gray
 			//} else {
 				// we didn't hit anything, choose an appropriate backbround color
-				setPixelColor(xPixelIndex, yPixelIndex, 0.1); // dark gray
+				//setPixelColor(xPixelIndex, yPixelIndex, 0.1); // dark gray
 			//}
 		}
 	}
@@ -139,6 +142,7 @@ function updateAndRender(timeElapsed) {
 }
 
 // We are ready to render, let the browser know
+
 requestAnimationFrame(updateAndRender);
 
 </script>
