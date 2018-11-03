@@ -38,13 +38,13 @@ var imageData = canvasContext.getImageData(0, 0, pixelsAcross, pixelsDown);
 
 // Raytracer setup
 var fov = 45;   // if this changes, your code should still work
-var fovRadians = Math.PI*(fov/2)/180; // todo -> convert degrees to radians
+var fovRadians = fov * Math.PI/180; // todo -> convert degrees to radians
 
 var pixelWidth = 2/256; // todo -> what's the size of a pixel from left to right? <-CHRIS CARSON
 var pixelHalfWidth = (2/256)/2; // todo -> half of the pixel width <-CHRIS CARSON
 
 // How far away (scalar) the eye is from the image plane (see MV3202 guide for more info)
-var eyeDistance = 1/(Math.tan(fovRadians/2)); // = todo -> hint: related to tangent and field of view (see slides)<-CHRIS CARSON
+var eyeDistance = 1/(Math.tan(fovRadians/2));
 // tan(fovRadians/2) = 1/eyeDistance <-CHRIS CARSON
 // -----------
 // |         /
@@ -89,6 +89,18 @@ function generateRayForPixel(xPixelIndex, yPixelIndex) {
 	// Uncomment this (the ray line of code) once you've calculated the pixelCoordinate in space and the
 	// direction from the eye to the pixelCoordinate
 	var pixelRay = new Ray(eyeCoordinate, direction);
+	return pixelRay;
+}
+
+function generateRayForShadow(xPixelIndex, yPixelIndex, lightPos) {
+
+	var pixelCoordinate = new Vector3(-1 + xPixelIndex*pixelWidth + pixelHalfWidth, 1 - yPixelIndex*pixelWidth - pixelHalfWidth, 0); // = todo: calculate pixel position<-CHRIS CARSON
+	var direction = pixelCoordinate.subtract(lightPos); // = vector from the eye to the pixel
+
+	// Creates a ray that will automatically normalize the direction
+	// Uncomment this (the ray line of code) once you've calculated the pixelCoordinate in space and the
+	// direction from the eye to the pixelCoordinate
+	var pixelRay = new Ray(lightPos, direction);
 	return pixelRay;
 }
 
@@ -158,9 +170,20 @@ function updateAndRender(timeElapsed) {
 
 
 			} else if (planeResult.hit) {
-				var normalDotLight = planeResult.normal.dot(lightPos.clone().subtract(planeResult.point).normalize());
-				setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
-				//setPixelColor(xPixelIndex, yPixelIndex, .5);
+				//Create our ray for testing for shadows.
+				var shadowRay = new Ray(planeResult.point, lightPos.clone().subtract(planeResult.point));
+				var sphereResultForShadow = sphere.raycast(shadowRay);
+
+
+				if (sphereResultForShadow.hit && (lightPos.clone().subtract(planeResult.point).length() > sphereVector.clone().subtract(planeResult.point).length())){
+					setPixelColor(xPixelIndex, yPixelIndex, 0);
+
+				}else{
+					var normalDotLight = planeResult.normal.dot(lightPos.clone().subtract(planeResult.point).normalize());
+					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+					//setPixelColor(xPixelIndex, yPixelIndex, .5);
+				}
+
 			} else {
 				// we didn't hit anything, choose an appropriate backbround color
 				setPixelColor(xPixelIndex, yPixelIndex, 0.1); // dark gray
