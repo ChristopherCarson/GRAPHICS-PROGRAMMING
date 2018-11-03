@@ -110,6 +110,7 @@ function setPixelColor(xPixelIndex, yPixelIndex, shadeOfGray /*[0,1]*/) {
 
 // -----------------------------------------------------------------------------
 function updateAndRender(timeElapsed) {
+	var lightPos = new Vector3 (1,0,0) //todo 9 static light position vector MICHAEL ROSE
 	// Go through every pixel
 	for (var yPixelIndex = 0; yPixelIndex < pixelsDown; ++yPixelIndex) {
 		for (var xPixelIndex = 0; xPixelIndex < pixelsAcross; ++xPixelIndex) {
@@ -126,8 +127,17 @@ function updateAndRender(timeElapsed) {
 
 			//var hitAnything = (sphereResult.hit || planeResult.hit);
 			//var hitAnything = sphereResult.hit;
-
-			if (sphereResult.hit) {
+			
+			//todo #8 checks which object is closest MICHAEL ROSE
+			
+			if(sphereResult.hit && planeResult.hit) {//both objects hit, determine which one is closer
+				if(sphereResult.distance < planeResult.distance) {
+					setPixelColor(xPixelIndex, yPixelIndex, 0.8)
+				}
+				else {
+					setPixelColor(xPixelIndex, yPixelIndex, 0.5)
+				}
+			} else if (sphereResult.hit) {
 				// determine  which hit object is the closest (in case there is more than 1 hit)
 				setPixelColor(xPixelIndex, yPixelIndex, 0.8); // middle gray
 			} else if (planeResult.hit) {
