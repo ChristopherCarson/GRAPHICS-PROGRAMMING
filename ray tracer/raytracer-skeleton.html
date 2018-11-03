@@ -72,9 +72,9 @@ var up = new Vector3(0, 1, 0);
 
 var sphereVector = new Vector3(0,0,0);
 var sphere = new Sphere(sphereVector,.2); // todo = new Sphere(..., ...);<-CHRIS CARSON
-var planeVector = new Vector3(0,1,0);//<-CHRIS CARSON
+var planeNormal = new Vector3(0,1,0);//<-CHRIS CARSON
 var planePointVector = new Vector3(0,-0.2,0);//<-CHRIS CARSON
-var plane = new Plane(planeVector,planePointVector); // todo = new Plane(..., ...);<-CHRIS CARSON Totally guessing on how to set up a plane here.
+var plane = new Plane(planeNormal, planePointVector); // todo = new Plane(..., ...);<-CHRIS CARSON Totally guessing on how to set up a plane here.
 
 // end of raytracer setup ******************************************************
 
@@ -110,10 +110,12 @@ function setPixelColor(xPixelIndex, yPixelIndex, shadeOfGray /*[0,1]*/) {
 
 // -----------------------------------------------------------------------------
 function updateAndRender(timeElapsed) {
-	var lightPos = new Vector3 (1,0,0) //todo 9 static light position vector MICHAEL ROSE
+	var seconds = timeElapsed * 0.001;
+	var lightPos = new Vector3 (Math.cos(seconds) * 0.5,0, Math.sin(seconds) * 0.5);
+	var vectorToLight = new Vector3();//Vector that will be used to calculate direction to the light source
 	// Go through every pixel
-	for (var yPixelIndex = 0; yPixelIndex < pixelsDown; ++yPixelIndex) {
-		for (var xPixelIndex = 0; xPixelIndex < pixelsAcross; ++xPixelIndex) {
+	for (var yPixelIndex = 1; yPixelIndex < pixelsDown; ++yPixelIndex) {
+		for (var xPixelIndex = 1; xPixelIndex < pixelsAcross; ++xPixelIndex) {
 			
 			var pixelRay = generateRayForPixel(xPixelIndex, yPixelIndex);
 			//var maxValue = Math.sin(Math.sqrt(2) / 4);
@@ -125,6 +127,13 @@ function updateAndRender(timeElapsed) {
 			var sphereResult = sphere.raycast(pixelRay);
 			var planeResult = plane.raycast(pixelRay);
 
+			//vector from sphere point to light
+		
+
+			// Get the cos(theta) between the 2 vectors
+			//var normalDotLight = // todo = your calculation
+			//setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+
 			//var hitAnything = (sphereResult.hit || planeResult.hit);
 			//var hitAnything = sphereResult.hit;
 			
@@ -132,16 +141,25 @@ function updateAndRender(timeElapsed) {
 			
 			if(sphereResult.hit && planeResult.hit) {//both objects hit, determine which one is closer
 				if(sphereResult.distance < planeResult.distance) {
-					setPixelColor(xPixelIndex, yPixelIndex, 0.8)
+			 		vectorToLight = sphereResult.point.subtract(lightPos);
+					var normalDotLight = sphereResult.normal.dot(vectorToLight);
+					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
 				}
 				else {
-					setPixelColor(xPixelIndex, yPixelIndex, 0.5)
+					vectorToLight = planeResult.point.subtract(lightPos);
+					var normalDotLight = planeResult.normal.dot(vectorToLight);
+					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
 				}
 			} else if (sphereResult.hit) {
 				// determine  which hit object is the closest (in case there is more than 1 hit)
-				setPixelColor(xPixelIndex, yPixelIndex, 0.8); // middle gray
+				vectorToLight = sphereResult.point.subtract(lightPos);
+				var normalDotLight = sphereResult.normal.dot(vectorToLight);
+				setPixelColor(xPixelIndex, yPixelIndex, normalDotLight); // middle gray
 			} else if (planeResult.hit) {
-				setPixelColor(xPixelIndex, yPixelIndex, 0.5); // gray
+				vectorToLight = planeResult.point.subtract(lightPos);
+				var normalDotLight = planeResult.normal.dot(vectorToLight);
+				setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+				//setPixelColor(xPixelIndex, yPixelIndex, .5);
 			} else {
 				// we didn't hit anything, choose an appropriate backbround color
 				setPixelColor(xPixelIndex, yPixelIndex, 0.1); // dark gray
