@@ -71,7 +71,7 @@ var Vector3 = function(x = 0, y = 0, z = 0) {
 	this.lengthSqr = function() {
 		// todo - return the squared magnitude of this vector ||v||^2 (1pt)
 		// This should NOT change the values of this.x, this.y, and this.z
-		return Math.pow(Math.sqrt(Math.pow(this.x, 2)+Math.pow(this.y, 2)+Math.pow(this.z, 2)),2);
+		return Math.pow(this.x, 2)+Math.pow(this.y, 2)+Math.pow(this.z, 2);
 	};
 
 	this.normalized = function() {

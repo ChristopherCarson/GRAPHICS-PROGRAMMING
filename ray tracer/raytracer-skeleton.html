@@ -75,7 +75,12 @@ var sphere = new Sphere(sphereVector,.2); // todo = new Sphere(..., ...);<-CHRIS
 var planeNormal = new Vector3(0,1,0);//<-CHRIS CARSON
 var planePointVector = new Vector3(0,-0.2,0);//<-CHRIS CARSON
 var plane = new Plane(planeNormal, planePointVector); // todo = new Plane(..., ...);<-CHRIS CARSON Totally guessing on how to set up a plane here.
-
+//creation of other planes
+var backWall = new Plane(new Vector3(0,0,1), new Vector3(0,0,-1));
+var leftWall = new Plane(new Vector3(1,0,0), new Vector3(-1,0,0));
+var rightWall = new Plane(new Vector3(-1,0,0), new Vector3(1,0,0));
+var ceiling = new Plane(new Vector3(0,-1,0), new Vector3(0,1,0));
+var scene = [sphere, plane, backWall, leftWall, rightWall, ceiling]; //throw new planes into this array.  make sure the sphere is first though <-MICHAEL ROSE
 // end of raytracer setup ******************************************************
 
 // -----------------------------------------------------------------------------
@@ -149,16 +154,54 @@ function updateAndRender(timeElapsed) {
 			//var hitAnything = (sphereResult.hit || planeResult.hit);
 			//var hitAnything = sphereResult.hit;
 			
-			//todo #8 checks which object is closest MICHAEL ROSE
+			//Extra Credit Part 1
+			var isSphere = true; //check to see if the closest interaction is a sphere or not
+			var closest = Number.MAX_SAFE_INTEGER; //distance of the closest interaction
+			var indexOfClosest = null; //index in the array of the closest interaction. must be set to null to avoid issues.
+			var resultOfClosest; //the result of the closest raycast
 			
+			//This will determine which interaction is closest if any
+			for(var i = 0; i < scene.length; i++) {
+				var testResult = scene[i].raycast(pixelRay);
+				if(testResult.hit) {
+					if(testResult.distance < closest) {
+						closest = testResult.distance;
+						indexOfClosest = i;
+						resultOfClosest = testResult;
+					}
+				}
+			}
+			
+			//This loop does all the calculations.  Since the sphere is at 0 position in the scene array, we can just use the index to check if the sphere is the closest or not
+			if(indexOfClosest != null){//there is an interaction
+				if(indexOfClosest == 0) {//the closest interaction is the sphere
+					var normalDotLight = resultOfClosest.normal.dot(lightPos.clone().subtract(resultOfClosest.point).normalize());
+					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+				}
+				else {//the closest interaction is a plane
+					var shadowRay = new Ray(resultOfClosest.point, lightPos.clone().subtract(resultOfClosest.point));
+					var sphereResultForShadow = sphere.raycast(shadowRay);
+					
+					if(sphereResultForShadow.hit && (lightPos.clone().subtract(resultOfClosest.point).length() > sphereVector.clone().subtract(resultOfClosest.point).length())){
+						setPixelColor(xPixelIndex, yPixelIndex, 0);
+					}else{
+						var normalDotLight = resultOfClosest.normal.dot(lightPos.clone().subtract(resultOfClosest.point).normalize());
+						setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+					}
+				}
+			}
+			else {//no interaction
+				setPixelColor(xPixelIndex, yPixelIndex, 0.1);
+			}/*COMMENTED OUT IN CASE OF ERROR.  probably delete when done and sure the above works.
+			//todo #8 checks which object is closest MICHAEL ROSE
 			if(sphereResult.hit && planeResult.hit) {//both objects hit, determine which one is closer
 				if(sphereResult.distance < planeResult.distance) {
-				var normalDotLight = sphereResult.normal.dot(lightPos.clone().subtract(sphereResult.point).normalize());
-				setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+					var normalDotLight = sphereResult.normal.dot(lightPos.clone().subtract(sphereResult.point).normalize());
+					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
 				}
 				else {
-				var normalDotLight = planeResult.normal.dot(lightPos.clone().subtract(planeResult.point).normalize());
-				setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+					var normalDotLight = planeResult.normal.dot(lightPos.clone().subtract(planeResult.point).normalize());
+					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
 				}
 
 
@@ -187,7 +230,7 @@ function updateAndRender(timeElapsed) {
 			} else {
 				// we didn't hit anything, choose an appropriate backbround color
 				setPixelColor(xPixelIndex, yPixelIndex, 0.1); // dark gray
-			}
+			} */
 		}
 	}
 
