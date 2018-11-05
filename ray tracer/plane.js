@@ -3,6 +3,7 @@ var Plane = function(normal, validPoint, color, reflectivity) {
 	this.normal = normal.normalized();
 	this.validPoint = validPoint;
 	this.color = color || new Vector3(1, 1, 1);
+	//this.color = (color != undefined) ? color: new Vector3(1, 1, 1);
 	this.reflectivity = (reflectivity != undefined) ? reflectivity: 0;
 
 	this.raycast = function(ray) {

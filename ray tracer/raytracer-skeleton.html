@@ -77,8 +77,8 @@ var planePointVector = new Vector3(0,-0.2,0);//<-CHRIS CARSON
 var plane = new Plane(planeNormal, planePointVector); // todo = new Plane(..., ...);<-CHRIS CARSON Totally guessing on how to set up a plane here.
 //creation of other planes
 var backWall = new Plane(new Vector3(0,0,1), new Vector3(0,0,-1));
-var leftWall = new Plane(new Vector3(1,0,0), new Vector3(-1,0,0));
-var rightWall = new Plane(new Vector3(-1,0,0), new Vector3(1,0,0));
+var leftWall = new Plane(new Vector3(1,0,0), new Vector3(-1,0,0), new Vector3(0,.5,0));
+var rightWall = new Plane(new Vector3(-1,0,0), new Vector3(1,0,0), new Vector3(1,0,0));
 var ceiling = new Plane(new Vector3(0,-1,0), new Vector3(0,1,0));
 var scene = [sphere, plane, backWall, leftWall, rightWall, ceiling]; //throw new planes into this array.  make sure the sphere is first though <-MICHAEL ROSE
 // end of raytracer setup ******************************************************
@@ -110,12 +110,12 @@ function generateRayForShadow(xPixelIndex, yPixelIndex, lightPos) {
 }
 
 // -----------------------------------------------------------------------------
-function setPixelColor(xPixelIndex, yPixelIndex, shadeOfGray /*[0,1]*/) {
+function setPixelColor(xPixelIndex, yPixelIndex, color /*[0,1]*/) {
 	var index = xPixelIndex*4 + yPixelIndex*4*pixelsAcross; //<-CHRIS CARSON
 
-	imageData.data[index + 0] = shadeOfGray * 255;
-	imageData.data[index + 1] = shadeOfGray * 255;
-	imageData.data[index + 2] = shadeOfGray * 255;
+	imageData.data[index + 0] = color.x * 255; // red channel
+	imageData.data[index + 1] = color.y * 255; // green channl
+	imageData.data[index + 2] = color.z * 255; // blue channel
 	imageData.data[index + 3] = 255;
 
 	// feel free to delete this when you are done implementing this function
@@ -176,7 +176,7 @@ function updateAndRender(timeElapsed) {
 			if(indexOfClosest != null){//there is an interaction
 				if(indexOfClosest == 0) {//the closest interaction is the sphere
 					var normalDotLight = resultOfClosest.normal.dot(lightPos.clone().subtract(resultOfClosest.point).normalize());
-					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+					setPixelColor(xPixelIndex, yPixelIndex, new Vector3(plane.color.x *normalDotLight,plane.color.y *normalDotLight, plane.color.z *normalDotLight));
 				}
 				else {//the closest interaction is a plane
 					var shadowRay = new Ray(resultOfClosest.point, lightPos.clone().subtract(resultOfClosest.point));
@@ -186,7 +186,7 @@ function updateAndRender(timeElapsed) {
 						setPixelColor(xPixelIndex, yPixelIndex, 0);
 					}else{
 						var normalDotLight = resultOfClosest.normal.dot(lightPos.clone().subtract(resultOfClosest.point).normalize());
-						setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
+						setPixelColor(xPixelIndex, yPixelIndex, new Vector3(scene[indexOfClosest].color.x *normalDotLight, scene[indexOfClosest].color.y *normalDotLight, scene[indexOfClosest].color.z *normalDotLight));
 					}
 				}
 			}
