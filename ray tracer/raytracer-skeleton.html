@@ -140,9 +140,6 @@ function updateAndRender(timeElapsed) {
 
 			// See if the ray intersects the sphere or the plane (or every object in our scene)
 			// Uncomment when your sphere or plane code is ready
-
-			var sphereResult = sphere.raycast(pixelRay);
-			var planeResult = plane.raycast(pixelRay);
 			//var planeResult = false;
 			//vector from sphere point to light
 		
@@ -192,45 +189,7 @@ function updateAndRender(timeElapsed) {
 			}
 			else {//no interaction
 				setPixelColor(xPixelIndex, yPixelIndex, 0.1);
-			}/*COMMENTED OUT IN CASE OF ERROR.  probably delete when done and sure the above works.
-			//todo #8 checks which object is closest MICHAEL ROSE
-			if(sphereResult.hit && planeResult.hit) {//both objects hit, determine which one is closer
-				if(sphereResult.distance < planeResult.distance) {
-					var normalDotLight = sphereResult.normal.dot(lightPos.clone().subtract(sphereResult.point).normalize());
-					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
-				}
-				else {
-					var normalDotLight = planeResult.normal.dot(lightPos.clone().subtract(planeResult.point).normalize());
-					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
-				}
-
-
-			} else if (sphereResult.hit) {
-				// determine  which hit object is the closest (in case there is more than 1 hit)
-				var normalDotLight = sphereResult.normal.dot(lightPos.clone().subtract(sphereResult.point).normalize());
-				setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
-				//setPixelColor(xPixelIndex, yPixelIndex, .5); // middle gray
-
-
-			} else if (planeResult.hit) {
-				//Create our ray for testing for shadows.
-				var shadowRay = new Ray(planeResult.point, lightPos.clone().subtract(planeResult.point));
-				var sphereResultForShadow = sphere.raycast(shadowRay);
-
-
-				if (sphereResultForShadow.hit && (lightPos.clone().subtract(planeResult.point).length() > sphereVector.clone().subtract(planeResult.point).length())){
-					setPixelColor(xPixelIndex, yPixelIndex, 0);
-
-				}else{
-					var normalDotLight = planeResult.normal.dot(lightPos.clone().subtract(planeResult.point).normalize());
-					setPixelColor(xPixelIndex, yPixelIndex, normalDotLight);
-					//setPixelColor(xPixelIndex, yPixelIndex, .5);
-				}
-
-			} else {
-				// we didn't hit anything, choose an appropriate backbround color
-				setPixelColor(xPixelIndex, yPixelIndex, 0.1); // dark gray
-			} */
+			}
 		}
 	}
 
