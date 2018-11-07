@@ -193,7 +193,7 @@ function updateAndRender(timeElapsed) {
 			//If the side of the sphere is in the light and the reflection hits a plan, use the color 
 			if(closestReflection.resultOfClosest.hit && normalDotLight > .2){
 				var normalDotLight = closestReflection.resultOfClosest.normal.dot(lightPos.clone().subtract(closestReflection.resultOfClosest.point).normalize());
-					setPixelColor(xPixelIndex, yPixelIndex, new Vector3((scene[closestReflection.indexOfClosest].color.x *normalDotLight+plane.color.x*normalDotLight)/2,(scene[closestReflection.indexOfClosest].color.y *normalDotLight+plane.color.y*normalDotLight)/2, (scene[closestReflection.indexOfClosest].color.z *normalDotLight+plane.color.z*normalDotLight)/2));
+					setPixelColor(xPixelIndex, yPixelIndex, new Vector3(scene[closestReflection.indexOfClosest].color.x *normalDotLight,scene[closestReflection.indexOfClosest].color.y *normalDotLight, scene[closestReflection.indexOfClosest].color.z *normalDotLight));
 			}else{
 				setPixelColor(xPixelIndex, yPixelIndex, new Vector3(plane.color.x *normalDotLight,plane.color.y *normalDotLight, plane.color.z *normalDotLight));
 			}
