@@ -53,13 +53,40 @@ var Matrix3 = function() {
 		// todo
 		// use the row and col to get the proper index into the 1d element array and return it
 		// return this.elements[/*index computed from row and col*/];
-		return this; // <== delete this line and use the one above
+		index = 0;
+		if (row == 0) {
+            if (col == 0) {
+                index = 0;
+            } else if (col == 1) {
+                index = 1;
+            } else {
+                index = 2;
+            }
+        } else if (row == 1) {
+            if (col == 0) {
+                index = 3;
+            } else if (col == 1) {
+                index = 4;
+            } else {
+                index = 5;
+            }
+        } else {
+            if (col == 0) {
+                index = 6;
+            } else if (col == 1) {
+                index = 7;
+            } else {
+                index = 8;
+            }
+        }
+		return this.elements[index];
 	};
 
 	// -------------------------------------------------------------------------
 	this.identity = function() {
 		// todo
 		// reset every element in 'this' matrix to make it the identity matrix
+		this.set(1, 0, 0, 0, 1, 0, 0, 0, 1);
 		return this;
 	};
 
@@ -89,6 +116,9 @@ var Matrix3 = function() {
 	this.multiplyScalar = function(s) {
 		// todo
 		// multiply every element in 'this' matrix by the scalar argument s
+		for (var i = 0; i < this.elements.length; i++) {
+            this.elements[i] = this.elements[i] * s;
+        }
 		return this;
 	};
 
@@ -97,28 +127,83 @@ var Matrix3 = function() {
 		// todo
 		// multiply 'this' matrix (on the left) by otherMatrixOnRight (on the right)
 		// the results should be applied to the elements on 'this' matrix
-		return this;
+        var e11 = this.elements[0] * otherMatrixOnRight.elements[0] + this.elements[1] * otherMatrixOnRight.elements[3] + this.elements[2] * otherMatrixOnRight.elements[6];
+        var e12 = this.elements[0] * otherMatrixOnRight.elements[1] + this.elements[1] * otherMatrixOnRight.elements[4] + this.elements[2] * otherMatrixOnRight.elements[7];
+        var e13 = this.elements[0] * otherMatrixOnRight.elements[2] + this.elements[1] * otherMatrixOnRight.elements[5] + this.elements[2] * otherMatrixOnRight.elements[8];
+        var e21 = this.elements[3] * otherMatrixOnRight.elements[0] + this.elements[4] * otherMatrixOnRight.elements[3] + this.elements[5] * otherMatrixOnRight.elements[6];
+        var e22 = this.elements[3] * otherMatrixOnRight.elements[1] + this.elements[4] * otherMatrixOnRight.elements[4] + this.elements[5] * otherMatrixOnRight.elements[7];
+        var e23 = this.elements[3] * otherMatrixOnRight.elements[2] + this.elements[4] * otherMatrixOnRight.elements[5] + this.elements[5] * otherMatrixOnRight.elements[8];
+        var e31 = this.elements[6] * otherMatrixOnRight.elements[0] + this.elements[7] * otherMatrixOnRight.elements[3] + this.elements[8] * otherMatrixOnRight.elements[6];
+        var e32 = this.elements[6] * otherMatrixOnRight.elements[1] + this.elements[7] * otherMatrixOnRight.elements[4] + this.elements[8] * otherMatrixOnRight.elements[7];
+        var e33 = this.elements[6] * otherMatrixOnRight.elements[2] + this.elements[7] * otherMatrixOnRight.elements[5] + this.elements[8] * otherMatrixOnRight.elements[8];
+        return this.set(e11, e12, e13, e21, e22, e23, e31, e32, e33);
+		//return this;
 	};
 
 	// -------------------------------------------------------------------------
 	this.determinant = function() {
 		// todo
 		// compute and return the determinant for 'this' matrix
-		return Math.Infinity; // should be the determinant
+		d1 = this.elements[0] * (this.elements[4] * this.elements[8] - this.elements[5] * this.elements[7]);
+        d2 = this.elements[1] * (this.elements[5] * this.elements[6] - this.elements[3] * this.elements[8]);
+        d3 = this.elements[2] * (this.elements[3] * this.elements[7] - this.elements[4] * this.elements[6]);
+        return d1 + d2 + d3; // the determinant
+		//return Math.Infinity; // should be the determinant
 	};
 
 	// -------------------------------------------------------------------------
 	this.transpose = function() {
 		// todo
 		// modify 'this' matrix so that it becomes its transpose
-		return this;
+        var e11 = this.elements[0];
+        var e12 = this.elements[3];
+        var e13 = this.elements[6];
+        var e21 = this.elements[1];
+        var e22 = this.elements[4];
+        var e23 = this.elements[7];
+        var e31 = this.elements[2];
+        var e32 = this.elements[5];
+        var e33 = this.elements[8];
+        return this.set(e11, e12, e13, e21, e22, e23, e31, e32, e33);
+		//return this;
 	};
 
 	// -------------------------------------------------------------------------
 	this.inverse = function() {
 		// todo
 		// modify 'this' matrix so that it becomes its inverse
-		return this;
+		//transpose
+        this.transpose();
+        //matrix of minors
+        var e11 = this.elements[4] * this.elements[8] - this.elements[5] * this.elements[7]
+        var e12 = this.elements[3] * this.elements[8] - this.elements[5] * this.elements[6]
+        var e13 = this.elements[3] * this.elements[7] - this.elements[4] * this.elements[6]
+        var e21 = this.elements[1] * this.elements[8] - this.elements[2] * this.elements[7]
+        var e22 = this.elements[0] * this.elements[8] - this.elements[2] * this.elements[6]
+        var e23 = this.elements[0] * this.elements[7] - this.elements[1] * this.elements[6]
+        var e31 = this.elements[1] * this.elements[5] - this.elements[2] * this.elements[4]
+        var e32 = this.elements[0] * this.elements[5] - this.elements[2] * this.elements[3]
+        var e33 = this.elements[0] * this.elements[4] - this.elements[1] * this.elements[3]
+
+        //matrix of cofactors
+        var e12 = (e12) * -1;
+        var e21 = (e21) * -1;
+        var e23 = (e23) * -1;
+        var e32 = (e32) * -1;
+
+        //adjugate/determinant
+        var mDeterminant = this.determinant();
+        var e11 = e11 / mDeterminant;
+        var e12 = e12 / mDeterminant;
+        var e13 = e13 / mDeterminant;
+        var e21 = e21 / mDeterminant;
+        var e22 = e22 / mDeterminant;
+        var e23 = e23 / mDeterminant;
+        var e31 = e31 / mDeterminant;
+        var e32 = e32 / mDeterminant;
+        var e33 = e33 / mDeterminant;
+        return this.set(e11, e12, e13, e21, e22, e23, e31, e32, e33);
+		//return this;
 	};
 
 	// -------------------------------------------------------------------------
