@@ -88,9 +88,13 @@ var Matrix4 = function() {
         // - arg1 is a Vector3 (arg2 and arg3 will be undefined)
         // - arg1 is x, arg2 is y, and arg3 is zd
         if (arg1 instanceof Vector3) {
-			
+			this.elements[3] = arg1.x;
+			this.elements[7] = arg1.y;
+			this.elements[11] = arg1.z;
         } else {
-			
+			this.elements[3] = arg1 + arg1;
+			this.elements[7] = arg2 + arg2;
+			this.elements[11] = arg3 + arg3;
         }
 
         return this;
