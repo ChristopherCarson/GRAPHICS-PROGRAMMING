@@ -53,33 +53,7 @@ var Matrix3 = function() {
 		// todo
 		// use the row and col to get the proper index into the 1d element array and return it
 		// return this.elements[/*index computed from row and col*/];
-		index = 0;
-		if (row == 0) {
-            if (col == 0) {
-                index = 0;
-            } else if (col == 1) {
-                index = 1;
-            } else {
-                index = 2;
-            }
-        } else if (row == 1) {
-            if (col == 0) {
-                index = 3;
-            } else if (col == 1) {
-                index = 4;
-            } else {
-                index = 5;
-            }
-        } else {
-            if (col == 0) {
-                index = 6;
-            } else if (col == 1) {
-                index = 7;
-            } else {
-                index = 8;
-            }
-        }
-		return this.elements[index];
+		return this.elements[row * 3 + col];
 	};
 
 	// -------------------------------------------------------------------------
