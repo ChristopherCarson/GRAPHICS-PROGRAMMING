@@ -27,7 +27,6 @@ var Matrix3 = function() {
 		for(var i = 0; i < this.elements.length; i++){
 			this.elements[i] = other.elements[i];
 		}
-		console.log(this);
 		return this;
 	};
 
