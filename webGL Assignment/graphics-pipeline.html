@@ -64,6 +64,10 @@
     // we preallocate our view-related matrix objects here and reuse them every frame
     var viewMatrix = new Matrix4();
     var projectionMatrix = new Matrix4();
+	
+	//extra credit todo #1 setting the initial time
+	var startTime = new Date().getTime();
+	var secondsElapsedSinceStart = 0;
 
     // the shader that will be used by each piece of geometry (they could each use their own shader but in this case it will be the same)
     var shaderProgram;
@@ -73,7 +77,7 @@
         initGL();
 
         createShaders();
-        //createTriangleGeometry();
+        createTriangleGeometry();
         //createLineGridGeometry();
 
         updateAndRender();
@@ -228,8 +232,17 @@
         // this is a new frame so let's clear out whatever happened last frame
         gl.clearColor(0.707, 0.707, 1, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        // renderTriangle(0);
+		
+		//extra credit todo#1 using the time currentTime variable above to count seconds
+		
+		var currentTime = new Date().getTime();
+		/*if(currentTime - startTime >= 1000){
+			secondsElapsedSinceStart += 1;
+			startTime = currentTime;
+			console.log("change");
+		}*/
+		
+        renderTriangle(currentTime);
         // renderLines();
     }
 
@@ -237,11 +250,19 @@
     function renderTriangle(secondsElapsedSinceStart) {
         // calculate the number of degrees we should have rotated given how much time has elapsed
         // 60 degrees per second
-        var degrees = secondsElapsedSinceStart * 60;
+        var degrees = secondsElapsedSinceStart * 0.1;
 
         // todo update the triangle geometry world matrix here (used to place the triangle into world space)
+		triangleGeometry.worldMatrix.identity();
+		triangleGeometry.worldMatrix.setRotationY(degrees);
+		triangleGeometry.worldMatrix.translate(0,0,-7);
+		
         // todo set view matrix to identity
+		viewMatrix.identity();
         // todo set the projection matrix using values from online guide
+		var aspectRatio = 768/512;
+		projectionMatrix.setPerspective(45, aspectRatio, 0.1, 1000);
+		triangleGeometry.bufferItemCount = 3;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, triangleGeometry.positionBuffer);
         gl.vertexAttribPointer(
@@ -255,7 +276,7 @@
 
         gl.bindBuffer(gl.ARRAY_BUFFER, triangleGeometry.colorBuffer);
         gl.vertexAttribPointer(
-            shaderProgram.vertexColorAttribute,
+            triangleGeometry.shaderProgram.vertexColorAttribute,
             3,
             gl.FLOAT,
             gl.FALSE,
