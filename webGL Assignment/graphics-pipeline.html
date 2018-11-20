@@ -196,22 +196,12 @@
 
         // specify the horizontal lines
         for (var i = -10; i <= 10; ++i) {
-            linePositions.push(i);
-            linePositions.push(-1);
-            linePositions.push(-10);
-            linePositions.push(i);
-            linePositions.push(-1);
-            linePositions.push(10);
+            linePositions.push(i, -1, -10, i, -1, 10);
         }
 
         // specify the lateral lines
         for (var i = -10; i <= 10; ++i) {
-            linePositions.push(-10);
-            linePositions.push(-1);
-            linePositions.push(i);
-            linePositions.push(10);
-            linePositions.push(-1);
-            linePositions.push(i);
+            linePositions.push(-10, -1, i, 10, -1, i);
         }
 
         console.log(linePositions);
