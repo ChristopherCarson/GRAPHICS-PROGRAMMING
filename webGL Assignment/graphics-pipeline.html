@@ -31,11 +31,15 @@
 <!-- fragment shader - Pixel color is determined here -->
 <script id="shader-fs" type="x-shader/x-fragment">
     precision mediump float;
+    uniform float uTime;
 
     varying vec3 vColor;
 
     void main(void) {
-        gl_FragColor = vec4(vColor, 1.0);
+
+    vec3 color = vec3(vColor[0]*cos(uTime*3.1),vColor[1]*sin(uTime*1.1),vColor[2]*sin(uTime*9.1));
+
+    gl_FragColor = vec4(color, 1);
     }
 </script>
 
@@ -68,6 +72,7 @@
 	//extra credit todo #1 setting the initial time
 	var startTime = new Date().getTime();
 	var secondsElapsedSinceStart = 0;
+    var Seconds60ths = 0;
 
     // the shader that will be used by each piece of geometry (they could each use their own shader but in this case it will be the same)
     var shaderProgram;
@@ -124,6 +129,7 @@
         // Here we get references to all of our attributes and uniforms and store them on the shaderProgram object.
         // Note: shaderProgram does not have these properties, we are magically adding them
         //       for our own bookkeeping
+        
 
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
         gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
@@ -131,6 +137,7 @@
         shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
         gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 
+        shaderProgram.timeUniform = gl.getUniformLocation(shaderProgram, "uTime");
         shaderProgram.worldMatrixUniform = gl.getUniformLocation(shaderProgram, "uWorldMatrix");
         shaderProgram.viewMatrixUniform = gl.getUniformLocation(shaderProgram, "uViewMatrix");
         shaderProgram.projectionMatrixUniform = gl.getUniformLocation(shaderProgram, "uProjectionMatrix");
@@ -171,9 +178,9 @@
         var colorBuffer = gl.createBuffer();//todo #6 I didn't actually do this. It was already here but it looks right MICHAEL ROSE
         gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
         var colors = [
-            1.0,    0.0,   0.0,
-            0.0,    1.0,   0.0,
-            0.0,    0.0,   1.0
+            1,    0,   0,
+            0,    1,   0,
+            0,    0,   1
         ];
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
@@ -213,15 +220,15 @@
 
         var lineColors = [];
         for (var i = 0; i < linePositions.length / 3; ++i) {
-            lineColors.push.apply(lineColors, [0, 0, 0, 0]);
+            lineColors.push.apply(lineColors, [Math.random(1), Math.random(1), Math.random(1), 1]);
         }
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lineColors), gl.STATIC_DRAW);
 
         lineGridGeometry.positionBuffer = positionBuffer;
         lineGridGeometry.colorBuffer = colorBuffer;
-        lineGridGeometry.bufferItemCount = linePositions.length / 3;
-        //lineGridGeometry.bufferItemCount = 4;
+        //lineGridGeometry.bufferItemCount = linePositions.length / 3;
+        lineGridGeometry.bufferItemCount = 2 * 21 * 2;
     }
 
     // -------------------------------------------------------------------------
@@ -231,6 +238,8 @@
         // specify what portion of the canvas we want to draw to (all of it, full width and height)
         gl.viewport(0, 0, 768, 512);//todo #2 set them equal to width and height of canvas (there is probably a better way to do this) MICHAEL ROSE
 
+
+
         // this is a new frame so let's clear out whatever happened last frame
         gl.clearColor(0.707, 0.707, 1, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -238,21 +247,26 @@
 		//extra credit todo#1 using the time currentTime variable above to count seconds
 		
 		var currentTime = new Date().getTime();
-		/*if(currentTime - startTime >= 1000){
+		if(currentTime - startTime >= 1000){
 			secondsElapsedSinceStart += 1;
 			startTime = currentTime;
-			console.log("change");
-		}*/
+			//console.log("change");
+		}
+
+        if(currentTime - startTime >= 1000/60){
+            Seconds60ths += 1/60;
+            //console.log("change");
+        }
 		
         renderTriangle(currentTime);
-        renderLines();
+        renderLines(Seconds60ths);
     }
 
     // -------------------------------------------------------------------------
     function renderTriangle(secondsElapsedSinceStart) {
         // calculate the number of degrees we should have rotated given how much time has elapsed
         // 60 degrees per second
-        var degrees = secondsElapsedSinceStart * 0.1;
+        var degrees = secondsElapsedSinceStart * 0.2;
 
         // todo update the triangle geometry world matrix here (used to place the triangle into world space)
 		triangleGeometry.worldMatrix.identity();
@@ -295,7 +309,7 @@
     }
 
     // -------------------------------------------------------------------------
-    function renderLines() {
+    function renderLines(Seconds60ths) {
         // todo update the triangle geometry world matrix here (used to place the triangle into world space)
         lineGridGeometry.worldMatrix.identity();
         lineGridGeometry.worldMatrix.translate(0,0,-7);
@@ -329,13 +343,14 @@
 
         // todo - send matrices to shader
         gl.uniformMatrix4fv(shaderProgram.worldMatrixUniform, false, lineGridGeometry.worldMatrix.clone().transpose().elements);
-        gl.uniformMatrix4fv(shaderProgram.viewMatrixUniform, false, viewMatrix.clone().transpose().elements);
-        gl.uniformMatrix4fv(shaderProgram.projectionMatrixUniform, false, projectionMatrix.clone().transpose().elements);
+        //gl.uniformMatrix4fv(shaderProgram.viewMatrixUniform, false, viewMatrix.clone().transpose().elements);
+        //gl.uniformMatrix4fv(shaderProgram.projectionMatrixUniform, false, projectionMatrix.clone().transpose().elements);
 
         // --------------------------------------------
         // below is done for you, uncomment when ready
 
-        //gl.uniform1f(shaderProgram.timeUniform, time.secondsElapsedSinceStart);
+        gl.uniform1f(shaderProgram.timeUniform, Seconds60ths);
+        //console.log(time);
 
         gl.drawArrays(gl.LINES, 0, lineGridGeometry.bufferItemCount);
     }
