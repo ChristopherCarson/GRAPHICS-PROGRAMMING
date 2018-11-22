@@ -67,7 +67,7 @@ function WebGLGeometryQuad(gl) {
             // send the image WebGL to use as this texture
             this.gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, rawImage);//Chris Carson
 
-            //this.gl.bindTexture(gl.TEXTURE_2D, null);//Chris Carson (commented this line out)
+            this.gl.bindTexture(gl.TEXTURE_2D, null);
         }
 	}
 
