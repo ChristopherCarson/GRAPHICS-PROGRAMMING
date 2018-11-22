@@ -48,18 +48,28 @@ function WebGLGeometryQuad(gl) {
         this.gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
 
         if (rawImage) {
-            this.texture = this.gl.createTexture();
+            this.texture = gl.createTexture();
 
             // todo bind the texture
+            this.gl.bindTexture(gl.TEXTURE_2D, this.texture);//Chris Carson
 
             // needed for the way browsers load images, ignore this
             this.gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
             // todo set wrap modes (for s and t) for the texture
-            // todo set filtering modes (magnification and minification) 
-            // send the image WebGL to use as this texture
 
-            this.gl.bindTexture(gl.TEXTURE_2D, null);
+            this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);//Chris Carson
+            this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);//Chris Carson
+            
+            // todo set filtering modes (magnification and minification) 
+            this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);//Chris Carson
+            this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);//Chris Carson
+
+            // send the image WebGL to use as this texture
+            this.gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, rawImage);//Chris Carson
+
+
+            //this.gl.bindTexture(gl.TEXTURE_2D, null);//Chris Carson (commented this line out)
         }
 	}
 
@@ -127,4 +137,11 @@ function WebGLGeometryQuad(gl) {
             gl.disableVertexAttribArray(attributes.vertexTexcoordsAttribute);
         }
 	}
+
+    function loadImage(url, callback) {
+  var image = new Image();
+  image.src = url;
+  image.onload = callback;
+  return image;
+}
 }
