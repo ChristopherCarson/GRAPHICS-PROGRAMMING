@@ -57,7 +57,6 @@ function WebGLGeometryQuad(gl) {
             this.gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
             // todo set wrap modes (for s and t) for the texture
-
             this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);//Chris Carson
             this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);//Chris Carson
             
@@ -67,7 +66,6 @@ function WebGLGeometryQuad(gl) {
 
             // send the image WebGL to use as this texture
             this.gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, rawImage);//Chris Carson
-
 
             //this.gl.bindTexture(gl.TEXTURE_2D, null);//Chris Carson (commented this line out)
         }
@@ -138,10 +136,4 @@ function WebGLGeometryQuad(gl) {
         }
 	}
 
-    function loadImage(url, callback) {
-  var image = new Image();
-  image.src = url;
-  image.onload = callback;
-  return image;
-}
 }
