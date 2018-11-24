@@ -46,7 +46,10 @@ function initGL(canvas) {
         gl.canvasHeight = canvas.height;
 
         // todo enable depth test (z-buffering)
+		gl.enable(gl.DEPTH_TEST);//Michael Rose
         // todo enable backface culling
+		gl.enable(gl.CULL_FACE);//Michael Rose
+		gl.glCullFace(gl.GL_BACK); //Michael Rose
     } catch (e) {}
 
     if (!gl) {
@@ -145,16 +148,20 @@ function updateAndRender() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     projectionMatrix.setPerspective(45, aspectRatio, 0.1, 1000);
-
+	
     groundGeometry.render(camera, projectionMatrix, textureShaderProgram);
-
     // todo - enable blending
+	gl.enable(gl.BLEND);
     // todo - set blend mode source to gl.SRC_ALPHA and destination to gl.ONE_MINUS_SRC_ALPHA
+	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     // todo - disable writing of objects to the depth buffer (depthMask) (future renders will ignore previous ones)
+	gl.depthMask(false);
 
-    // for (var i = 0; i < sphereGeometryList.length; ++i) {
-    //     sphereGeometryList[i].render(camera, projectionMatrix, textureShaderProgram);
-    // }
+    for (var i = 0; i < sphereGeometryList.length; ++i) {
+        sphereGeometryList[i].render(camera, projectionMatrix, textureShaderProgram);
+    }
 
     // todo - return to previous state (disable blending and turn depth writing back on)
+	gl.disable(gl.BLEND);
+	gl.depthMask(true);
 }
