@@ -6,8 +6,9 @@ uniform float uAlpha;
 varying vec2 vTexcoords;
 
 void main(void) {
-    gl_FragColor = texture2D(uTexture, vTexcoords);
+
+vec4 color = texture2D(uTexture, vTexcoords);
+color.a = uAlpha;
+gl_FragColor = color;
+
 }
-
-
-

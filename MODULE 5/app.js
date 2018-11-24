@@ -158,7 +158,10 @@ function updateAndRender() {
 	gl.depthMask(false);
 
     for (var i = 0; i < sphereGeometryList.length; ++i) {
+
+        //console.log(Object.keys(sphereGeometryList[i]));
         sphereGeometryList[i].render(camera, projectionMatrix, textureShaderProgram);
+
     }
 
     // todo - return to previous state (disable blending and turn depth writing back on)
