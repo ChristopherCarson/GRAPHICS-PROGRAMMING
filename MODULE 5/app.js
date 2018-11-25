@@ -157,11 +157,15 @@ function updateAndRender() {
     // todo - disable writing of objects to the depth buffer (depthMask) (future renders will ignore previous ones)
 	gl.depthMask(false);
 
-    for (var i = 0; i < sphereGeometryList.length; ++i) {
-
-        //console.log(Object.keys(sphereGeometryList[i]));
+    //Use the camera's yawDegree variable to determien the order to render spheres (Painter's Algorythm)
+    if (camera.yawDegrees > -90 && camera.yawDegrees < 90){
+        for (var i = 0; i < sphereGeometryList.length; ++i) {
+            sphereGeometryList[i].render(camera, projectionMatrix, textureShaderProgram);
+        }
+    }else{
+        for (var i = sphereGeometryList.length-1; i > -1; --i) {
         sphereGeometryList[i].render(camera, projectionMatrix, textureShaderProgram);
-
+        }
     }
 
     // todo - return to previous state (disable blending and turn depth writing back on)
