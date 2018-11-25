@@ -44,8 +44,8 @@ function WebGLGeometryJSON(gl) {
             this.gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
             // todo set wrap modes (for s and t) for the texture
-			this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);//Michael Rose
-			this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);//Michael Rose
+			this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);//Michael Rose
+			this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);//Michael Rose
             // todo set filtering modes (magnification and minification) 
 			this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);//Michael Rose
 			this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);//Michael Rose
@@ -107,11 +107,17 @@ function WebGLGeometryJSON(gl) {
             gl.bindTexture(gl.TEXTURE_2D, this.texture);
         }
 
+        var currentTime = new Date().getTime();
+        if(currentTime - startTime >= 1000/180){
+            SecondsElapsedSinceStart += 1/180;
+        }
+
         // Send our matrices to the shader
         gl.uniformMatrix4fv(uniforms.worldMatrixUniform, false, this.worldMatrix.clone().transpose().elements);
         gl.uniformMatrix4fv(uniforms.viewMatrixUniform, false, camera.getViewMatrix().clone().transpose().elements);
         gl.uniformMatrix4fv(uniforms.projectionMatrixUniform, false, projectionMatrix.clone().transpose().elements);
         gl.uniform1f(uniforms.alphaUniform, this.alpha);
+        gl.uniform1f(uniforms.timeUniform, SecondsElapsedSinceStart);
 
         gl.drawElements(gl.TRIANGLES, this.indexCount, gl.UNSIGNED_SHORT, 0);
 

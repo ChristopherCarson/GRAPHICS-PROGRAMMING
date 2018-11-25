@@ -12,6 +12,6 @@ varying vec2 vTexcoords;
 // todo make sure to pass texture coordinates for interpolation to fragment shader
 
 void main(void) {
-    gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1.0);
+    gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aVertexPosition, 1);
     vTexcoords = aTexcoords;
 }

@@ -25,6 +25,9 @@ var loadedAssets = {
     uvGridImage: null                         // a basic test image
 };
 
+var SecondsElapsedSinceStart = 0;
+var startTime = new Date().getTime();
+        
 // -------------------------------------------------------------------------
 function initializeAndStartRendering() {
     initGL();
@@ -96,6 +99,7 @@ function createShaders(loadedAssets) {
         projectionMatrixUniform: gl.getUniformLocation(textureShaderProgram, "uProjectionMatrix"),
         textureUniform: gl.getUniformLocation(textureShaderProgram, "uTexture"),
         alphaUniform: gl.getUniformLocation(textureShaderProgram, "uAlpha"),
+        timeUniform: gl.getUniformLocation(textureShaderProgram, "uTime"),
     };
 }
 
@@ -112,6 +116,7 @@ function createScene() {
 
     groundGeometry.worldMatrix.multiplyRightSide(rotation);
     groundGeometry.worldMatrix.multiplyRightSide(scale);
+        
 
     for (var i = 0; i < 3; ++i) {
         var sphereGeometry = new WebGLGeometryJSON(gl, textureShaderProgram);
@@ -157,7 +162,9 @@ function updateAndRender() {
     // todo - disable writing of objects to the depth buffer (depthMask) (future renders will ignore previous ones)
 	gl.depthMask(false);
 
-    //Use the camera's yawDegree variable to determien the order to render spheres (Painter's Algorythm)
+
+
+    //Use the camera's yawDegree variable to determine the order to render spheres (Painter's Algorithm)
     if (camera.yawDegrees > -90 && camera.yawDegrees < 90){
         for (var i = 0; i < sphereGeometryList.length; ++i) {
             sphereGeometryList[i].render(camera, projectionMatrix, textureShaderProgram);

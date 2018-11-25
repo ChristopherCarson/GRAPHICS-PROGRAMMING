@@ -57,8 +57,8 @@ function WebGLGeometryQuad(gl) {
             this.gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
             // todo set wrap modes (for s and t) for the texture
-            this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);//Chris Carson
-            this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);//Chris Carson
+            this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);//Chris Carson
+            this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);//Chris Carson
             
             // todo set filtering modes (magnification and minification) 
             this.gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);//Chris Carson
