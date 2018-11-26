@@ -108,8 +108,8 @@ function WebGLGeometryJSON(gl) {
         }
 
         var currentTime = new Date().getTime();
-        if(currentTime - startTime >= 1000/180){
-            SecondsElapsedSinceStart += 1/180;
+        if(currentTime - startTime >= 1000/360){
+            SecondsElapsedSinceStart += 1/360;
         }
 
         // Send our matrices to the shader
