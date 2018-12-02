@@ -8,6 +8,7 @@ var camera = new OrbitCamera(appInput);
 
 var sphereGeometry = null; // this will be created after loading from a file
 var groundGeometry = null;
+var teapotGeometry = null;
 
 var projectionMatrix = new Matrix4();
 var lightPosition = new Vector3(5, 3, 0);
@@ -32,6 +33,7 @@ var loadedAssets = {
     phongTextVS: null, phongTextFS: null,
     vertexColorVS: null, vertexColorFS: null,
     sphereJSON: null,
+    teapotJSON: null,
     marbleImage: null,
     crackedMudImage: null
 };
@@ -71,8 +73,10 @@ function loadAssets(onLoadedCB) {
         fetch('./shaders/phong.vs.glsl').then((response) => { return response.text(); }),
         fetch('./shaders/phong.Positionlit.fs.glsl').then((response) => { return response.text(); }),
         fetch('./data/sphere.json').then((response) => { return response.json(); }),
+        fetch('./data/teapot.json').then((response) => { return response.json(); }),
         loadImage('./data/marble.jpg'),
-        loadImage('./data/crackedMud.png')
+        loadImage('./data/crackedMud.png'),
+        loadImage('./data/paint.png')
     ];
 
     Promise.all(filePromises).then(function(values) {
@@ -80,8 +84,10 @@ function loadAssets(onLoadedCB) {
         loadedAssets.phongTextVS = values[0];
         loadedAssets.phongTextFS = values[1];
         loadedAssets.sphereJSON = values[2];
-        loadedAssets.marbleImage = values[3];
-        loadedAssets.crackedMudImage = values[4];
+        loadedAssets.teapotJSON = values[3];
+        loadedAssets.marbleImage = values[4];
+        loadedAssets.crackedMudImage = values[5];
+        loadedAssets.paint = values[6];
     }).catch(function(error) {
         console.error(error.message);
     }).finally(function() {
@@ -114,11 +120,21 @@ function createScene() {
     groundGeometry = new WebGLGeometryQuad(gl, phongShaderProgram);
     groundGeometry.create(loadedAssets.crackedMudImage);
 
+    var scale = new Matrix4().scale(0.03, 0.03, 0.03);
+    var scaleTeapot = new Matrix4().scale(0.05, 0.05, 0.05);
+    var rotate = new Matrix4().setRotationX(270);
+
+    teapotGeometry = new WebGLGeometryJSON(gl, phongShaderProgram);
+    teapotGeometry.create(loadedAssets.teapotJSON, loadedAssets.paint);
+
+    teapotGeometry.worldMatrix.identity();
+    teapotGeometry.worldMatrix.multiplyRightSide(scaleTeapot);
+    teapotGeometry.worldMatrix.multiplyRightSide(rotate);
+
+    teapotGeometry.worldMatrix.translate(5, .5, -5);
+
     sphereGeometry = new WebGLGeometryJSON(gl, phongShaderProgram);
     sphereGeometry.create(loadedAssets.sphereJSON, loadedAssets.marbleImage);
-
-    // Scaled it down so that the diameter is 3, (starts at 100)
-    var scale = new Matrix4().scale(0.03, 0.03, 0.03);
 
     sphereGeometry.worldMatrix.identity();
     sphereGeometry.worldMatrix.multiplyRightSide(scale);
@@ -158,5 +174,6 @@ function updateAndRender() {
     projectionMatrix.setPerspective(45, aspectRatio, 0.1, 1000);
     groundGeometry.render(camera, projectionMatrix, phongShaderProgram);
     sphereGeometry.render(camera, projectionMatrix, phongShaderProgram);
+    teapotGeometry.render(camera, projectionMatrix, phongShaderProgram);
 
 }
