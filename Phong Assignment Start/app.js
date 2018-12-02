@@ -137,15 +137,7 @@ function updateAndRender() {
 
     // todo 
     // add keyboard controls for changing light Position here
-    if (appInput.up){
-        rotateUpMatrix.multiplyVector(lightPosition);
-    }else if (appInput.down){
-        rotateDownMatrix.multiplyVector(lightPosition);
-    }else if (appInput.right){
-        rotateRightMatrix.multiplyVector(lightPosition);
-    }else if (appInput.left){
-        rotateLeftMatrix.multiplyVector(lightPosition);
-    }
+    rotateRightMatrix.multiplyVector(lightPosition);
 
     time.update();
     camera.update(time.deltaTime);
